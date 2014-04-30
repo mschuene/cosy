@@ -1,0 +1,12 @@
+#+TITLE:Excercise 1 
+#+AUTHOR: Maik Schünemann
+#+email: maikschuenemann@gmail.com
+#+TAGS:  BlowerDoor(b) Suub(s) Uni(u) Home(h) Task(t) Note(n) Info(i)#+TAGS: Changed(c) Project(p) Reading(r) Hobby(f) OpenSource(o) Meta(m)#+SEQ_TODO: TODO(t) STARTED(s) WAITING(w) APPT(a) | DONE(d) CANCELLED(c) DEFERRED(f) NEXT(n)#+STARTUP:showall
+#+LaTeX_CLASS: uni
+-----
+* Modules needed [ / ]
+  - [ ] Memory
+  - [ ] Goals
+  - [ ] Strategy
+  - [ ] Temporal model
+  - [ ] 
