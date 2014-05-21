@@ -1,0 +1,141 @@
+% Created 2014-05-14 Wed 08:46
+\documentclass[presentation]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usetheme{default}
+\author{Maik Schünemann}
+\date{\today}
+\title{Excercise 1 presentation}
+\begin{document}
+
+\maketitle
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\begin{frame}[label=sec-1]{Outline}
+\begin{itemize}
+\item Components and Processes
+\item Dealing with the example problems
+\item Examples
+\end{itemize}
+\end{frame}
+\begin{frame}[label=sec-2]{Components and Processes}
+To be able to process visual stimuli we need the following components:
+\begin{itemize}
+\item Perceptual System
+Responsibilities:
+\begin{itemize}
+\item Build a model of the visual stimuli suitable to further processing.
+\item Build a model of the given task
+\end{itemize}
+\item Strategical System
+Responsibilities:
+\begin{itemize}
+\item Models the thinking process
+\item Designs a strategy of how to approach the problem
+\end{itemize}
+\item Processing System
+Responsibilities:
+\begin{itemize}
+\item Executes the chosen strategy
+\item Stores results in the memory system
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-3]{Components and Processes}
+\begin{itemize}
+\item Memory System
+Responsibilities:
+\begin{itemize}
+\item In this problem domain we only need short term memory
+\item Simply provides a place to store information
+\end{itemize}
+\end{itemize}
+\begin{itemize}
+\item Temporal System
+\begin{itemize}
+\item Gives the architecture a sense of time
+\item Can cancel current actions when there is no time left
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[label=sec-4]{Dealing with the example problems}
+\begin{block}{Task is described}
+\begin{itemize}
+\item Perceptual System responsible for modeling and storing the model in memory
+\item Strategical System decides about the strategy
+\item Temporal system sets timer
+\end{itemize}
+\end{block}
+\begin{block}{Picture is shown}
+\begin{itemize}
+\item Perceptual system models the system and stores model in memory
+\item Processing system is invoked to execute the chosen strategy
+\begin{itemize}
+\item Stores intermediate results in memory
+\end{itemize}
+\item When no time is left gets interrupted by the memory system
+\item Has chance to make a guess about the final result
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[label=sec-5]{Models}
+\begin{block}{Task}
+\begin{itemize}
+\item modeled after features it has to recognize when looking at a single cell
+\end{itemize}
+\end{block}
+
+\begin{block}{Picture}
+\begin{itemize}
+\item Matrix of cells containing features of objects at the position
+\end{itemize}
+\end{block}
+
+\begin{block}{Strategy}
+determines:
+\begin{itemize}
+\item which order to process the cells of the picture
+\item guess when no time is left
+\end{itemize}
+\end{block}
+\begin{block}{Simple strategy}
+\begin{itemize}
+\item scan top to bottom left to right
+\item return number of matching objects counted if no time is left
+\end{itemize}
+\end{block}
+
+\begin{block}{Advanced strategy}
+\begin{itemize}
+\item scan top to bottom left to right
+\item interpolate guess from amount seen so far on interrupt
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[label=sec-6]{Examples}
+Live\ldots{}..
+\end{frame}
+% Emacs 24.3.1 (Org mode 8.2.6)
+\end{document}

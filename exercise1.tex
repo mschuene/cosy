@@ -1,0 +1,172 @@
+% Created 2014-05-14 Wed 08:27
+\documentclass[presentation]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usetheme{default}
+\author{Maik Schünemann}
+\date{\today}
+\title{Exercise 1}
+\begin{document}
+
+\maketitle
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+
+\rule{\linewidth}{0.5pt}
+\begin{frame}[label=sec-1]{Design and Implementation of a simple cognitive architecture}
+For the given problem of processing visual stimuli 
+we designed the following cognitive architecture:
+\begin{block}{Components and Processes}
+To be able to process visual stimuli we need the following components:
+\begin{itemize}
+\item Perceptual System
+Responsibilities:
+\begin{itemize}
+\item Build a model of the visual stimuli suitable to further processing.
+\item Build a model of the given task
+\end{itemize}
+\item Strategical System
+Responsibilities:
+\begin{itemize}
+\item Models the thinking process
+\item Designs a strategy of how to approach the problem
+\end{itemize}
+\item Processing System
+Responsibilities:
+\begin{itemize}
+\item Executes the chosen strategy
+\item Stores results in the memory system
+\end{itemize}
+\item Memory System
+Responsibilities:
+\begin{itemize}
+\item In this problem domain we only need short term memory
+\item Simply provides a place to store information
+\end{itemize}
+\item Temporal System
+\begin{itemize}
+\item Gives the architecture a sense of time
+\item Can cancel current actions when there is no time left
+\end{itemize}
+\end{itemize}
+\end{block}
+\begin{block}{Dealing with the example problems}
+Our system can solve the exercises in the following way:
+When the task is described to our system, the Perceptual is
+responsible for modeling it and storing the model in memory.
+It also invokes the Strategical System to plan how the task is
+going to be solved and stores the plan in the Memory system.
+And gives the Temporal System the information of how much time it
+has to perform the task.
+Afterwards, when the time is set and our system is shown the
+picture for the task, the Perceptual System first builds an
+internal model of the picture and invokes the Processing System to
+execute the chosen plan. The Processing System interacts with the
+Memory system to store intermediate results.
+The Temporal System is responsible for constraining the time frame
+available for the Processing System and cancels it when there is no
+time left. According to the chosen Strategy the (intermediate)
+Result is transformed to a final answer of the system.
+
+\begin{block}{Model of the Task}
+Because we only have to deal with counting tasks which check for
+certain features of the elements in a picture, we can model the
+task by the features it has to recognize when looking at a cell of
+the picture.
+\end{block}
+
+\begin{block}{Model of the Picture}
+The picture can be modeled by a matrix of cells containing the
+features of the object at the given position.
+\end{block}
+
+\begin{block}{Model of the Strategy}
+The Strategy determines in which order the picture is processed
+and what to do when no time if left.
+Example Strategies are:
+\begin{itemize}
+\item look at cells from top to bottom left to right and count how
+often the task accepted a cell. If no time is left simply report
+the current information
+\item like above but interpolate from the amount of the picture
+processed so far a guess for the final answer
+\end{itemize}
+\end{block}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[label=sec-2]{Examples:}
+We will demonstrate the examples live during the presentation of the assignment.
+For the examples, we chosed small arrays as inputs for our system.
+We simulate the behaviour of running out of time by adding timeouts to the 
+executer
+\begin{block}{1}
+Picture:
+[[\#\{:blue :square\} \#\{:red :hexagon\} \#\{:yellow :circle\} \#\{:yellow :triangle\}]
+ [\#\{\} \#\{:blue :square\} \#\{:blue :square\}\#\{:blue :square]])
+
+
+Search for: blue square
+
+
+Answer: 4
+
+
+If the available time is enough the system will, of course, give the right answer.
+With the simple strategy, the system will return the number of matching items 
+seen so far, so if it had only time to look at the first item, it will return
+1
+\end{block}
+\begin{block}{2}
+Picture
+[[\#\{:blue :square\} \#\{:red :square\} \#\{:yellow :square\} \#\{:yellow :square\}]
+ [\#\{\} \#\{:blue :square\} \#\{:blue :square\} \#\{:blue :square\}]])
+
+
+Search for: blue square
+
+
+Answer:4
+
+
+The system can distinguish similar shapes. With enough time it will also give the right answer.
+Same goes for similar colors.
+\end{block}
+
+\begin{block}{3}
+Picture:
+[[\#\{:blue :square\} \#\{:red :hexagon\} \#\{:blue :square\}\#\{:yellow :triangle\}] 
+[[\#\{:blue :square\} \#\{:brown :triangle\} \#\{:blue :square\}\#\{:yellow :hexagon\}] 
+[[\#\{:blue :square\} \#\{:orange :triangle\} \#\{:blue :square\}\#\{:green :circle\}] 
+[[\#\{:blue :square\} \#\{:yellow :square\} \#\{:blue :square\}\#\{:yellow :square\}] 
+
+
+Search for: blue square
+
+
+If we test it with the advanced strategy and don't give it enough time, it will 
+guess at timeout how much blue squares are there interpolating from how much
+it has seen so far and how much of the array it has traversed.
+This is a good strategy here because we have a homogenous distribution of blue 
+squares here.
+\end{block}
+\end{frame}
+% Emacs 24.3.1 (Org mode 8.2.6)
+\end{document}
