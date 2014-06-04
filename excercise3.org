@@ -1,0 +1,41 @@
+#+TITLE:Excercise3 
+#+AUTHOR: Maik Schünemann
+#+email: maikschuenemann@gmail.com
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  de
+#+OPTIONS:   H:3 num:t toc:t :nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME:
+#+TAGS:  BlowerDoor(b) Suub(s) Uni(u) Home(h) Task(t) Note(n) Info(i)
+#+TAGS: Changed(c) Project(p) Reading(r) Hobby(f) OpenSource(o) Meta(m)
+#+SEQ_TODO: TODO(t) STARTED(s) WAITING(w) APPT(a) | DONE(d) CANCELLED(c) DEFERRED(f) NEXT(n)
+#+STARTUP:showall
+#+LaTeX_CLASS: uni
+-----
+* TODO Aufgaben
+** Random Generator of Visual Inputs
+***  Who:
+   Maik
+** Gruppierungen
+*** Algorithm
+    Grouping starts when the perception is finished
+    (peripheral view has located all objects)
+    For the grouping process we can do the following:
+    For each Object recognized, look for all neighbors
+    If some neighbor is similiar according to the current 
+    proximity, merge the objects
+    Do so until there is nothing left to merge
+
+*** Erweitern der Spracherkennung
+    Fragen müssen erkannt werden
+ 
+*** Who
+    Yoschi tfred
+** mit obscurten visual stimuli umgehen
+*** Who
+    Wadim
