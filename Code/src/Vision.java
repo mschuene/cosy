@@ -53,6 +53,6 @@ public class Vision {
     
     
     public static VisualObject[][] getInput() {
-        return excercise3example;
+        return example;
     }
 }
