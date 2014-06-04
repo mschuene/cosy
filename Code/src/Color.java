@@ -1,0 +1,6 @@
+/**
+ * Farbe
+ */
+public enum Color {
+    WHITE, YELLOW, ORANGE, RED, LIGHT_BLUE, DARK_BLUE, LIGHT_GREEN, DARK_GREEN, PURPLE, PINK, BRAUN, BLACK
+}
