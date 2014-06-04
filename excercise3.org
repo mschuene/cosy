@@ -39,3 +39,6 @@
 ** mit obscurten visual stimuli umgehen
 *** Who
     Wadim
+** Fix bugs in excercise 2
+*** Who 
+    Wadim
