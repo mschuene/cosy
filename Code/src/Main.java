@@ -30,8 +30,7 @@ public class Main {
 	        if(shapes.length == 2 && colors.length == 2) {
 	        	int re1 = ShortTimedMemory.remember(colors[0], shapes[0]);
 	        	int re2 = ShortTimedMemory.remember(colors[1], shapes[1]);
-	        	
-	        	if(re1 > -1) {
+	           	if(re1 > -1) {
 	        		int i = Thinkpad.focusView(Thinkpad.peripheralView(Vision.getInput(), colors[1]), shapes[1]);
 	        		ShortTimedMemory.memorize(colors[1], shapes[1], i);
 	        		

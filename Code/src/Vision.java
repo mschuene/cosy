@@ -41,7 +41,18 @@ public class Vision {
         
     };
     
+    private static VisualObject[][] excercise3example = new VisualObject[][]{
+    	{new VisualObject(Shape.CIRCLE,Color.LIGHT_BLUE),
+         new VisualObject(Shape.CIRCLE, Color.LIGHT_BLUE),
+         null,
+         new VisualObject(Shape.CIRCLE, Color.LIGHT_BLUE),
+         new VisualObject(Shape.CIRCLE, Color.LIGHT_BLUE),
+         null,
+         new VisualObject(Shape.CIRCLE, Color.LIGHT_BLUE),
+         new VisualObject(Shape.CIRCLE, Color.LIGHT_BLUE)}};
+    
+    
     public static VisualObject[][] getInput() {
-        return example;
+        return excercise3example;
     }
 }
