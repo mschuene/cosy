@@ -31,4 +31,9 @@ public class VisualObject {
     public Color getColor() {
         return color;
     }
+    
+    public String toString() {
+    	return "|"+this.color.toString()+" "+this.shape.toString()+"|";
+    	
+    }
 }
