@@ -1,4 +1,4 @@
-(ns excercise1.core
+(ns excercise3.core
   (:use [clojure.core.matrix]))
 
 (def memory (atom {:picture nil
@@ -71,3 +71,4 @@
                     [#{} #{:blue :square}]])
 
 (def example-task [:blue :square])
+

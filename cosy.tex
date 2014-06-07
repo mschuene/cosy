@@ -1,0 +1,267 @@
+% Created 2014-06-04 Wed 23:09
+\NeedsTeXFormat{LaTeX2e}
+\documentclass[11pt,a4paper,oneside]{scrartcl}
+\usepackage[ngerman, germanb]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{DejaVuSansMono}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[colorlinks=true,linkcolor=black]{hyperref}
+\usepackage{graphicx}
+\hypersetup{
+    colorlinks=true,        % false: boxed links; true: colored links
+    urlcolor=blue           % color of external links
+}
+\usepackage[margin=2.5cm]{geometry} %ist für die Größere der Seite da, wie groß darf der Textkörper sein.
+
+% mathe makros
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\qed}{$ \hfill \Box $}
+\newcommand{\im}[1]{\text{Im}\left(#1\right)}
+\newcommand{\re}[1]{\text{Re}\left(#1\right)}
+
+%\renewcommand*\familydefault{\sfdefault}
+\let\oldtexttt = \texttt
+\renewcommand{\texttt}[1]{\oldtexttt{\footnotesize #1}}
+
+% enlarge page
+\geometry{tmargin=25mm,bmargin=25mm,lmargin=23mm,rmargin=23mm}
+
+% skip between paragraphs
+\setlength{\parskip}{1ex}
+% ... and no indentation at start of a new paragraph
+\setlength{\parindent}{0ex}
+
+%Layout for lstlistings
+\definecolor{gray}{rgb}{0.6,0.6,0.6}
+\lstloadlanguages{java} % Java sprache laden, notwendig wegen option 'savemem'
+\lstset{ %
+	language=java,	
+	basicstyle=\ttfamily\scriptsize,
+	numbers=left,
+	numberstyle=\tiny\ttfamily,
+	numbersep=6pt,
+	literate=%
+		{Ö}{{\"O}}1
+		{Ä}{{\"A}}1
+		{Ü}{{\"U}}1
+		{ß}{{\ss}}2
+		{ü}{{\"u}}1
+		{ä}{{\"a}}1
+		{ö}{{\"o}}1,
+	showspaces=false,
+	showtabs=false,
+	showstringspaces=false,
+	keywordstyle=\bfseries,
+	tabsize=4,
+	frame=l,
+	aboveskip=12pt,
+	extendedchars=true,
+	stringstyle=\ttfamily,
+	commentstyle=\itshape\color{gray},
+	postbreak=\space,
+	breakindent=5pt,
+	breaklines,
+	xleftmargin=20pt}
+	
+% überschriften und son zeug
+\pagestyle{fancy}
+\lhead{} \chead{} \rhead{} 
+\lfoot{} \cfoot{\thepage} \rfoot{} 
+\renewcommand{\headrulewidth}{0.4pt} 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\author{Maik Schünemann}
+\date{\today}
+\title{Cognitive Systems model}
+\hypersetup{
+ pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 24.3.1 (Org mode 8.2.6)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\rule{\linewidth}{0.5pt}
+
+\section{Introduction}
+\label{sec-1}
+this program evolved from a series of excercises from the course
+Cognitive Systems. It models how human perceive and group objects
+in a picture.
+
+It demonstrates the concepts only \ldots{} the tasks it has to solve are
+counting objects in a picture which match certain criteria in their
+shapes and color.
+\section{Internal representations}
+\label{sec-2}
+\subsection{Picture}
+\label{sec-2-1}
+A picture is stored as a 2-dimensional array of cells. Each cell is
+just a a map with the keys :color and :shape and the values are
+just keywords. A example picture can be represented like this:
+\begin{verbatim}
+(ns cosy.input
+  (:require [quil.core :refer :all]
+	    [clojure.test.check :as tc]
+	    [clojure.test.check.generators :as gen]
+	    [clojure.test.check.properties :as prop]))
+
+(defn setup []
+  (smooth)                         
+  (frame-rate 24)                  
+  (background 200))                
+
+(def example-array
+  [[{} {} {} {} [:black :circle] {} {} {}]
+   [{} {} {} {} {} {} [:blue :circle] {}]
+   [[:yellow :square] [:blue :square] {} {} {} {} {} {}]
+   [{} [:red :circle] [:blue :circle] {} {} {} {} {}]
+   [{} [:black :circls] {} {} [:black :circle] {} {} [:blue :circle]]
+   [[:blue :circle]{}{}[:red :triangle]{}{}[:red :circle][:blue :quare]]
+   [{} {} [:blue :circle] {} [:yellow :square] {} {} {}]
+   [[:red :circle] {} {} {} {} {} {} {}]])
+
+(alter-var-root #'*out* (constantly *out*))
+
+(def cellwidth 50)
+(def cellheight 50)
+
+(def rgb-color {:red [255 0 0]
+		:blue [0 0 255]
+		:green [0 255 0]
+		:yellow [255 255 0]
+		:black [0 0 0]})
+
+(defn get-rgb-color [cell]
+  (get rgb-color (first cell) [255 255 255]))
+
+(def draw-funcs
+  {:square #(rect (+ 5 %1) (+ 5 %2)
+		  (- cellwidth 10)
+		  (- cellheight 10))
+   :circle #(ellipse (+ 25 %1) (+ 25 %2)
+		     (- cellwidth 10)
+		     (- cellheight 10))
+   :triangle #(triangle (+ %1 25) %2
+			(+ %1 5) (+ %2 40)
+			(+ %1 45) (+ %2 40)) })
+
+(defn draw-shape [shape x y]
+  ((get draw-funcs shape (constantly nil)) x y))
+
+(defn visualize-array [array]
+  ;;each cell will be 25x25 pixel big
+  (doseq[[i y] (map-indexed
+		vector (range 0 (* cellwidth (count array))
+			      cellwidth))
+	 [j x] (map-indexed
+		vector (range 0 (* cellheight (count (first array)))
+			      cellheight))]
+    (fill (apply color (get-rgb-color (get-in array [i j]))))
+    (draw-shape (second (get-in array [i j])) x y)))
+
+(defn draw []
+  (rect 0 0 25 25)
+  (rect 25 0 25 25))
+
+(defsketch example                 
+  :title "cosy again" 
+  :setup setup                     
+  :draw (fn [] (visualize-array example-array))
+  :size [400 400])              
+
+
+
+(defn gen-array []
+  (let [x (gen/choose 5 10)
+	y (gen/choose 5 10)
+	s (gen/elements [:circle :square :triangle])
+	c (gen/elements [:black :blue :red :yellow :green])]
+    (as-> (gen/tuple x y) x)))
+\end{verbatim}
+
+
+\section{Components}
+\label{sec-3}
+The system needs the following components to model the human behaviour
+\begin{itemize}
+\item perception - from a picture to informations contained in it
+\item Memory - The human equivalent of storage/cache
+\item Processing unit - the human cpu
+\end{itemize}
+
+\subsection{Perception}
+\label{sec-3-1}
+The perception is the most important cognitive component when the
+goal is to model the human behaviour.
+Scanning the shown picture top to botton left to right is trivial
+to implement and efficient for a computer, but a human does not
+perceive the world in this way.
+A Human automatically filters much information that is not needed
+for the task at hand and therefore does \textbf{not} look at each cell in
+order to count objects.
+
+\subsubsection{How does a Human perceive and process a visual input to count objects in it}
+\label{sec-3-1-1}
+Take this picture for example:
+\href{cosy.png}{A sample visual stimuli}
+When looking at the picture we instantly see where the colors are,
+so when the task is to count the red circles we are not even
+concerned about the top right area of the picture. Shapes are a
+little harder to recognize.
+How do we do this? 
+\begin{itemize}
+\item We cannot focus on the whole picture all at once but only see
+sharply at the center of our viewpoint. In the rest of our
+view we can't see details but we can recognize where what colors
+are on the picture.
+\item afterwards, we know where to focus and then move our eyes so
+that we can recognize the details in the areas.
+\item Even the focus-view does not look sequentially at each cell of
+the picture but can scan a whole (presumably circle but
+simplified to a rectangular area for this project) area at once
+\item We perform thus the minimal eye movement in order to focus at
+each interesting area one time and are so filtering a large part
+of the picture
+\end{itemize}
+
+\subsubsection{Implementation}
+\label{sec-3-1-2}
+\begin{enumerate}
+\item Simplifications/Assumptions
+\label{sec-3-1-2-1}
+We are going to assume that our system only has to process images
+that aren't too big so that the whole picture fits in the
+peripheral view field and we can quickly perceive where certain
+colors are.
+With focus view, we are able to process a small square area of
+the image at once (say 4x4 cells)
+\item Peripheral view - recognize boundaries for regions of color
+\label{sec-3-1-2-2}
+\end{enumerate}
+% Emacs 24.3.1 (Org mode 8.2.6)
+\end{document}
