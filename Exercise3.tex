@@ -1,0 +1,122 @@
+% Created 2014-06-04 Wed 23:09
+\NeedsTeXFormat{LaTeX2e}
+\documentclass[11pt,a4paper,oneside]{scrartcl}
+\usepackage[ngerman, germanb]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{DejaVuSansMono}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[colorlinks=true,linkcolor=black]{hyperref}
+\usepackage{graphicx}
+\hypersetup{
+    colorlinks=true,        % false: boxed links; true: colored links
+    urlcolor=blue           % color of external links
+}
+\usepackage[margin=2.5cm]{geometry} %ist für die Größere der Seite da, wie groß darf der Textkörper sein.
+
+% mathe makros
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\qed}{$ \hfill \Box $}
+\newcommand{\im}[1]{\text{Im}\left(#1\right)}
+\newcommand{\re}[1]{\text{Re}\left(#1\right)}
+
+%\renewcommand*\familydefault{\sfdefault}
+\let\oldtexttt = \texttt
+\renewcommand{\texttt}[1]{\oldtexttt{\footnotesize #1}}
+
+% enlarge page
+\geometry{tmargin=25mm,bmargin=25mm,lmargin=23mm,rmargin=23mm}
+
+% skip between paragraphs
+\setlength{\parskip}{1ex}
+% ... and no indentation at start of a new paragraph
+\setlength{\parindent}{0ex}
+
+%Layout for lstlistings
+\definecolor{gray}{rgb}{0.6,0.6,0.6}
+\lstloadlanguages{java} % Java sprache laden, notwendig wegen option 'savemem'
+\lstset{ %
+	language=java,	
+	basicstyle=\ttfamily\scriptsize,
+	numbers=left,
+	numberstyle=\tiny\ttfamily,
+	numbersep=6pt,
+	literate=%
+		{Ö}{{\"O}}1
+		{Ä}{{\"A}}1
+		{Ü}{{\"U}}1
+		{ß}{{\ss}}2
+		{ü}{{\"u}}1
+		{ä}{{\"a}}1
+		{ö}{{\"o}}1,
+	showspaces=false,
+	showtabs=false,
+	showstringspaces=false,
+	keywordstyle=\bfseries,
+	tabsize=4,
+	frame=l,
+	aboveskip=12pt,
+	extendedchars=true,
+	stringstyle=\ttfamily,
+	commentstyle=\itshape\color{gray},
+	postbreak=\space,
+	breakindent=5pt,
+	breaklines,
+	xleftmargin=20pt}
+	
+% überschriften und son zeug
+\pagestyle{fancy}
+\lhead{} \chead{} \rhead{} 
+\lfoot{} \cfoot{\thepage} \rfoot{} 
+\renewcommand{\headrulewidth}{0.4pt} 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\author{Maik Schünemann}
+\date{\today}
+\title{Cognitive Systems model}
+\hypersetup{
+ pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 24.3.1 (Org mode 8.2.6)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\rule{\linewidth}{0.5pt}
+
+\section{Task 1}
+\subsection{Concept of the extension}
+Our idea was to use the peripheral view from the last exercise to find all regions, that have adjacent objects \textit{(wie funktioniert das?)}. We model regions as rectangles, that contain object, that have (in this case) adjacent objects and have a distance of 2 or less. Now these regions have to be observed by the focus view as follows.\\
+If we search groups of similarity of proximity, the focus view now looks for groups of adjacent object, that have more than one object in them. A group is build by first adding one object into the group and then looking at the adjacent objects and adding them to the group as well. Now we look at the adjacent objects of the adjacent objects and so on. This is done until there are no adjacent objects left. Then we start to build the next group. If we already looked at an object we will remember that and not look at it again. If the group anly contains one object we wil not count it.\\
+When we search groups of similarity of form or color, the system does the same as above. The only difference is that we are not looking for adjacent object only, but for adjacent objects that have the same form or color as the current object itself.\\
+After we observed every region the system will return the result.
+\section{Task 2}
+\subsection{Concept of the extension}
+We decided, that an object is obscured, when more than half of its objects are not obscuring objects. For example, a 4 times 4 square would be obscured if 10 objects are not obscuring objects, but would not be obscured if 10 objects are obscuring objects.\\
+Also, if two \"potential\" obscured objects share one or more obscuring object, only one of them will be counted as an obscured object.\\
+First the peripheral view forms regions that contain (wie funktioniert das?) obscuring objects and its adjacent objects. \textit{(hier bin ich mir nicht mehr sicher ob ich das richtig verstanden hab)} Now the focus view applies an object finding routine from exercise 2 (like square and line) on a region \textit{(hier ist noch weitere erklärung nötig)}. If the system finds an object, it remembers that the obscuring objects, that are involved, are occupied and will not use them to find another obscured object.\\
+After we observed every region the system will return the results.
+\end{document}
