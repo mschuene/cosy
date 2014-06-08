@@ -112,6 +112,7 @@
 Our idea was to use the peripheral view from the last exercise to find all regions, that have adjacent objects \textit{(wie funktioniert das?)}. We model regions as rectangles, that contain object, that have (in this case) adjacent objects and have a distance of 2 or less. Now these regions have to be observed by the focus view as follows.\\
 If we search groups of similarity of proximity, the focus view now looks for groups of adjacent object, that have more than one object in them. A group is build by first adding one object into the group and then looking at the adjacent objects and adding them to the group as well. Now we look at the adjacent objects of the adjacent objects and so on. This is done until there are no adjacent objects left. Then we start to build the next group. If we already looked at an object we will remember that and not look at it again. If the group anly contains one object we wil not count it.\\
 When we search groups of similarity of form or color, the system does the same as above. The only difference is that we are not looking for adjacent object only, but for adjacent objects that have the same form or color as the current object itself.\\
+When we search for groups with no specific similarities, the system gives back the amount of groups of similarity of color. This is because, color is the most dominant feature and a human will mostly search for color than for other features.\\
 After we observed every region the system will return the result.
 \section{Task 2}
 \subsection{Concept of the extension}
