@@ -109,10 +109,14 @@
 
 \section{Task 1}
 \subsection{Concept of the extension}
-First we searched for a way to count all groups of type proximity in a picture. The idea was to use the peripheral view from the last exercise to find all clusters. An object is in a cluster if it has a directly adjacent object that is in that cluster. Also clusters have more than one object in them, because they otherwise would not be a group. After that we count the clusters just like we would count single objects.\\
-When the system is asked to count all groups of similarity of color or form, it first clusters the whole picture, just like when we search of type proximity. Now we look at every cluster and search for groups of type form or color. Everytime we find one, the memory will increment its number of groups found.
+Our idea was to use the peripheral view from the last exercise to find all regions, that have adjacent objects \textit{(wie funktioniert das?)}. We model regions as rectangles, that contain object, that have (in this case) adjacent objects and have a distance of 2 or less. Now these regions have to be observed by the focus view as follows.\\
+If we search groups of similarity of proximity, the focus view now looks for groups of adjacent object, that have more than one object in them. A group is build by first adding one object into the group and then looking at the adjacent objects and adding them to the group as well. Now we look at the adjacent objects of the adjacent objects and so on. This is done until there are no adjacent objects left. Then we start to build the next group. If we already looked at an object we will remember that and not look at it again. If the group anly contains one object we wil not count it.\\
+When we search groups of similarity of form or color, the system does the same as above. The only difference is that we are not looking for adjacent object only, but for adjacent objects that have the same form or color as the current object itself.\\
+After we observed every region the system will return the result.
 \section{Task 2}
 \subsection{Concept of the extension}
-We decided, that an object is obscured, when more than half of its objects are not obscured. For example, a 4 times 4 square would be obscured if 10 objects are not obscured, but would not be obscured if 10 objects are obscured.\\
-In exercise 2 we already implemented a way to recognize certain object like squares and lines. We figured that we could use that to find obscured objects as well.  
+We decided, that an object is obscured, when more than half of its objects are not obscuring objects. For example, a 4 times 4 square would be obscured if 10 objects are not obscuring objects, but would not be obscured if 10 objects are obscuring objects.\\
+Also, if two \"potential\" obscured objects share one or more obscuring object, only one of them will be counted as an obscured object.\\
+First the peripheral view forms regions that contain (wie funktioniert das?) obscuring objects and its adjacent objects. \textit{(hier bin ich mir nicht mehr sicher ob ich das richtig verstanden hab)} Now the focus view applies an object finding routine from exercise 2 (like square and line) on a region \textit{(hier ist noch weitere erklärung nötig)}. If the system finds an object, it remembers that the obscuring objects, that are involved, are occupied and will not use them to find another obscured object.\\
+After we observed every region the system will return the results.
 \end{document}
