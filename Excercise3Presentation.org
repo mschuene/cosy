@@ -1,0 +1,84 @@
+#+TITLE:Cognitive Systems Excercise 3 
+#+AUTHOR: Maik Schünemann
+#+email: maikschuenemann@gmail.com
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  de
+#+OPTIONS:   H:1 num:t toc:t :nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME:
+#+TAGS:  BlowerDoor(b) Suub(s) Uni(u) Home(h) Task(t) Note(n) Info(i)
+#+TAGS: Changed(c) Project(p) Reading(r) Hobby(f) OpenSource(o) Meta(m)
+#+SEQ_TODO: TODO(t) STARTED(s) WAITING(w) APPT(a) | DONE(d) CANCELLED(c) DEFERRED(f) NEXT(n)
+#+STARTUP:showall
+#+LaTeX_CLASS:try
+#+LaTeX_CLASS:beamer
+-----
+** How to count groups 
+   - Similar to counting objets
+   - first filter for regions that are of interest
+   - for each object found in a interesting region scan
+     group it belongs 
+** filter for interesting regions
+   - peripheral view looks where the non-empty regions area
+     - in contrast to color-based filtering from excercise 2
+** count groups of different types
+*** proximity
+    - look at the whole cluster at once 
+      - cluster contains all cells reachable by going down, left,right
+	or up
+*** shape
+    - include all reachable cells with same shape as current cell
+*** color
+    - include all reachable cells with same color as current cell
+** deal with obscured objects
+   - obscured objects means we don't know anything about the 
+     *actual* contents of the cell where it is
+   - optimistic approach:
+     - if looking for objects/visual-routines include obscured cells
+     - can be recognized if at least half of the objects aren't obscured
+     - if included in a recognized object parts of the properties
+       are /determined/
+     - no contradictions where a obscured object is counted twice 
+       as different things
+** examples
+** #1
+   \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width=\textwidth]{grouping_example}
+	\caption{Recognizing 4 groups of proximity}
+	\label{fig:aufbau}
+    \end{figure}
+** #2
+   \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width=\textwidth]{color_groups_example}
+	\caption{Recognizing the groups of color}
+	\label{fig:aufbau}
+    \end{figure}
+** #3
+   \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width=\textwidth]{count_obscured}
+	\caption{Recognizing one line-like object}
+	\label{fig:aufbau}
+    \end{figure}
+** #4
+   \begin{figure}[hbtp]
+   	\centering
+	\includegraphics[width= 0.7 \textwidth]{shape_group_example}
+	\caption{Recognizing the groups of shape}
+	\label{fig:aufbau}
+    \end{figure}
+
+** #5
+     \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width= 0.7 \textwidth]{count_red_circles}
+	\caption{counting - including obscured objects}
+	\label{fig:aufbau}
+    \end{figure}

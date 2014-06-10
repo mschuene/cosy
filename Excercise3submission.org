@@ -15,7 +15,7 @@
 #+TAGS: Changed(c) Project(p) Reading(r) Hobby(f) OpenSource(o) Meta(m)
 #+SEQ_TODO: TODO(t) STARTED(s) WAITING(w) APPT(a) | DONE(d) CANCELLED(c) DEFERRED(f) NEXT(n)
 #+STARTUP:showall
-#+LaTeX_CLASS: uni
+#+LaTeX_CLASS:try
 -----
 * Excercise 1
 
@@ -41,7 +41,34 @@
     only behave differently when they decide whether the adjacent cell
     belongs to the same group or not
 
-*** Examples: See the attached Screenshots
+*** Examples: \\
+    
+    \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width= 0.7 \textwidth]{grouping_example}
+	\caption{Recognizing 4 groups of proximity}
+	\label{fig:aufbau}
+    \end{figure}
+
+    \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width= 0.7 \textwidth]{color_groups_example}
+	\caption{Recognizing the groups of color}
+	\label{fig:aufbau}
+    \end{figure}
+
+    \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width= 0.7 \textwidth]{count_obscured}
+	\caption{Recognizing one line-like object}
+	\label{fig:aufbau}
+    \end{figure}btp]
+	\centering
+	\includegraphics[width= 0.7 \textwidth]{shape_group_example}
+	\caption{Recognizing the groups of shape}
+	\label{fig:aufbau}
+    \end{figure}
+
 
 * Excercise2
   We introduced the special object 'obscured' to our cognitive
@@ -69,3 +96,22 @@
 
 
 * Examples 
+  1.Here is one example where our System recognizes that there is
+  one line-like obscured object
+   \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width= 0.7 \textwidth]{count_obscured}
+	\caption{Recognizing one line-like object}
+	\label{fig:aufbau}
+    \end{figure} \\
+  2.Another Example of how the system can deal with obscured objects
+  in all circumstances. Here it has the task to count all red circles
+  and finds 13. This is the right answer because if recognizes a 
+  line of two red circles at the bottom of the image with one
+  being obscured
+   \begin{figure}[hbtp]
+	\centering
+	\includegraphics[width= 0.7 \textwidth]{count_red_circles}
+	\caption{counting - including obscured objects}
+	\label{fig:aufbau}
+    \end{figure}

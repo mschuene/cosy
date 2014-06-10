@@ -194,7 +194,7 @@
             s (gen/frequency [[15 (gen/elements
                                   [:circle :square
                                    :triangle])]
-                              [1 (gen/return :obscured)]])
+                              [3 (gen/return :obscured)]])
             c (gen/elements [:black :blue :red :yellow :green])
             elemc (gen/choose 15 100)]
         (as-> (gen/tuple elemc x y) gen
@@ -338,7 +338,7 @@
           (seq (first (focus/get-cluster stimulus #{:red :black :blue :green
                                                     :yellow}
                                          #{:square :triangle :circle}
-                                         coor)))
+                                         coor #{})))
           [coor])
          #_(for [adjac [[i j] [(dec i) j] [i (dec j)] [i (inc j)] [(inc i) j]]
                :when (not (empty? (get-in stimulus [i j])))]
@@ -402,46 +402,50 @@
          (mapv + (:offset @mem/memory) position))
 
        (defn check-constraints [position colors shapes]
-         (prn "positioniii " position (mapv + (:offset @mem/memory) position))
+         #_(prn "positioniii " position (mapv + (:offset @mem/memory) position))
          (let [[colc shapec] (get (:obscured @mem/memory)
                                   (mapv + (:offset @mem/memory) position))]
-           (prn "colc shapec" colc shapec)
+          #_ (prn "colc shapec" colc shapec)
            (if (and colc shapec)
-             (do (prn "colc shapec " colc shapec)
+             (do #_(prn "colc shapec " colc shapec)
                  (and (some colc colors) (some shapec shapes)))
              true)))
 
        ;;color-pred and shape-pred have to be sets
-       (defn matches? [region position color-pred? shape-pred?]
+       (defn matches? [region position color-pred? shape-pred? looked-at]
          (let [[color shape] (get-in region position)]
-           (or (and color (color-pred? color) (shape-pred? shape))
-               (and (obscured? [color shape])
-                    (check-constraints position color-pred? shape-pred?)))))
+           (and
+            (or (and color (color-pred? color) (shape-pred? shape))
+                (and (obscured? [color shape])
+                     (check-constraints position color-pred? shape-pred?)))
+            (not ((into #{} looked-at) position)))))
 
-       (defn adjacent-cells [region color-pred? shape-pred? [x y]]
+       (defn adjacent-cells [region color-pred? shape-pred? [x y] looked-at]
          (let [directions [[0 0] [-1 0] [0 -1] [1 0] [0 1]]]
            (->> directions
-                (#(do (prn "directions " %) %))
+              #_  (#(do (prn "directions " %) %))
                 (map (fn [[dx dy]]
                           (if (and (> (count region) (+ x dx) -1)
                                    (> (count (first region)) (+ y dy) -1))
                             [(+ x dx) (+ y dy)]
                             [])))
-                (#(do (prn %) %))
+                #_(#(do (prn %) %))
                 (remove empty?)
-                (filter #(matches? region % color-pred? shape-pred?))
-                (#(do (prn "after filter " %) %))
+                (filter
+                 #(matches? region % color-pred? shape-pred? looked-at))
+              #_  (#(do (prn "after filter " %) %))
                 ;;TODO change call to matches on top
                 (into #{}))))
 
-       (defn get-cluster [region color-pred? shape-pred? position]
+       (defn get-cluster [region color-pred? shape-pred? position looked-at]
          (loop [adj #{position}]
            (let [nadj (apply set/union
                              (map #(adjacent-cells
                                     region
                                     color-pred?
                                     shape-pred?
-                                    %) adj))]
+                                    %
+                                    looked-at) adj))]
              (if (= (count adj) (count nadj))
                (when (> (count adj) 1)
                  [adj {:type :region :cluster (map add-offset adj)}])
@@ -453,7 +457,7 @@
          (/ (count (filter #(obscured? (get-in region %)) cluster))
             (count cluster)))
 
-       (defn recognize-square [region color-pred? shape-pred? [i j]]
+       (defn recognize-square [region color-pred? shape-pred? [i j] looked-at]
          (let [current-cell (get-in region [i j])]
            ;;assume it is the top left cell of a square - sound.
            (loop [size 2
@@ -463,7 +467,7 @@
                              [i j])]
                (if (and
                     (every?
-                     #(matches? region % color-pred? shape-pred?)
+                     #(matches? region % color-pred? shape-pred? looked-at)
                      cluster)
                     (<= (%-obscured region cluster) 0.5))
                  (recur (inc size) cluster)
@@ -471,31 +475,34 @@
                    [matching-cluster {:type :square
                                  :size (dec size)
                                  :cluster (map add-offset matching-cluster)}]))))))
-       (defn recognize-cross [region color-pred? shape-pred? [i j]]
+       (defn recognize-cross [region color-pred? shape-pred? [i j] looked-at]
          (let [cluster
-               #{[i j] [(inc i) (dec j)] [(inc i) j]
-                 [(inc i) (inc j)][(+ i 2) (inc j)]}]
+               [[i j] [(inc i) (dec j)] [(inc i) j]
+                 [(inc i) (inc j)][(+ i 2) j]]]
            (when (and
                   (every? #(matches? region %
                                      color-pred?
-                                     shape-pred?)
+                                     shape-pred?
+                                     looked-at)
                           cluster)
                   (<= (%-obscured region cluster) 0.5))
              [cluster {:type :cross :cluster (map add-offset cluster)}])))
 
-       (defn recognize-line [region color-pred? shape-pred? [i j]]
+       (defn recognize-line [region color-pred? shape-pred? [i j] looked-at]
          (let [horizontal
                (loop [j j cluster #{[i j]}]
                  (if (matches? region [i j]
                                color-pred?
-                               shape-pred?)
+                               shape-pred?
+                               looked-at)
                    (recur (inc j) (conj cluster [i j]))
                    cluster))
                vertical
                (loop [i i cluster #{[i j]}]
                  (if (matches? region [i j]
                                color-pred?
-                               shape-pred?)
+                               shape-pred?
+                               looked-at)
                    (recur (inc i) (conj cluster [i j]))
                    cluster))
                recognized (if (and (>= (count horizontal) (count vertical))
@@ -508,8 +515,10 @@
                           :length (count recognized)
                           :cluster (map add-offset recognized)}])))
 
-       (defn recognize-point [region color-pred? shape-pred? position]
-         (when-not (obscured? (get-in region position))
+       (defn recognize-point [region color-pred? shape-pred? position
+                              looked-at]
+         (when-not (or (obscured? (get-in region position))
+                       (looked-at position))
            [#{position} {:type :point
                          :cluster #{(add-offset position)}}]))
 
@@ -521,16 +530,20 @@
           recognize-point
           ])
 
-       (defn apply-visual-routines [region color-pred? shape-pred? position]
-         (some #(% region color-pred? shape-pred? position)
+       (defn apply-visual-routines [region color-pred? shape-pred? position
+                                    looked-at]
+         (some #(% region color-pred? shape-pred? position looked-at)
                visual-routines))
        ;;ok next approach - don't return whole cluster but for each position
        ;;try in the visual routines if there is a object
 
+
+
+
        (defn next-location [region current-location looked-at]
          (let [rowc (count region)
                colc (count (first region))
-               _ (prn "region " region)
+       #_#_        _ (prn "region " region)
                [r c] current-location
                nl (cond
                    (> colc (inc c)) [r (inc c)]
@@ -557,7 +570,7 @@
        (defn add-obscured-constraints [region cluster color-pred? shape-pred?]
          (if-let [obscured-cells (seq (filter #(obscured? (get-in region %))
                                               cluster))]
-           (do (prn "obscurec-cells" obscured-cells)
+           (do #_(prn "obscurec-cells" obscured-cells)
             (swap! mem/memory
                    update-in [:obscured]
                    #(apply assoc %
@@ -568,40 +581,41 @@
                                        (get (:obscured @mem/memory) obsc))])
                                    obscured-cells))))))
 
-         (defn add-recognized-object [recognized]
-           (swap! mem/memory update-in [:recognized]
-                  (fnil #(conj % recognized) [])))
 
-         (defn scan-region [region color-pred? shape-pred?]
-           (loop [position [0 0] looked-at #{} recognized-objects []]
-             ;;search for matching-cell
-             (add-message (str "looking at " position))
-             (prn "current-position " position
-                  "looked at " looked-at
-                  "recognized-objects " recognized-objects)
-             (cond
-              (nil? position) (do (add-message "scanned whole region")
-                                  recognized-objects)
-              (matches? region position color-pred? shape-pred?)
-              (let [_ (prn "found something -look for visual-routines")
-                    [visited recognized]
-                    (apply-visual-routines
-                     region color-pred? shape-pred? position)]
-                (if recognized
-                  (let [_ (add-message (str "found " (pr-str recognized)
-                                            "on the cells" (pr-str visited)))
-                        looked-at (set/union looked-at visited)
-                        _ (add-obscured-constraints region visited
-                                                    color-pred? shape-pred?)
-                        _ (add-recognized-object recognized)]
-                    (recur (next-location region position looked-at)
-                           looked-at
-                           (conj recognized-objects recognized)))
+       (defn add-recognized-object [recognized]
+         (swap! mem/memory update-in [:recognized]
+                (fnil #(conj % recognized) [])))
+
+       (defn scan-region [region color-pred? shape-pred?]
+         (loop [position [0 0] looked-at #{} recognized-objects []]
+           ;;search for matching-cell
+           (add-message (str "looking at " position))
+           (prn "current-position " position
+                "looked at " looked-at
+                "recognized-objects " recognized-objects)
+           (cond
+            (nil? position) (do (add-message "scanned whole region")
+                                recognized-objects)
+            (matches? region position color-pred? shape-pred? looked-at)
+            (let [_ (prn "found something -look for visual-routines")
+                  [visited recognized]
+                  (apply-visual-routines
+                   region color-pred? shape-pred? position looked-at)]
+              (if recognized
+                (let [_ (add-message (str "found " (pr-str recognized)
+                                          "on the cells" (pr-str visited)))
+                      looked-at (set/union looked-at visited)
+                      _ (add-obscured-constraints region visited
+                                                  color-pred? shape-pred?)
+                      _ (add-recognized-object recognized)]
                   (recur (next-location region position looked-at)
-                         looked-at recognized-objects)))
-              :else (recur (next-location region position looked-at)
-                           looked-at recognized-objects))))
-                                                   
+                         looked-at
+                         (conj recognized-objects recognized)))
+                (recur (next-location region position looked-at)
+                       looked-at recognized-objects)))
+            :else (recur (next-location region position looked-at)
+                         looked-at recognized-objects))))
+
           
 
        (defn get-contents [color-region visual-stimulus]
@@ -650,7 +664,9 @@
                                   :red}]]
            (for [reg (get (:regions @mem/memory) :clusters)
                  :let [region (get-contents reg
-                                            (:stimulus @mem/memory))]]
+                                            (:stimulus @mem/memory))
+                       offset [(second (first reg)) (ffirst reg)]
+                       _ (swap! mem/memory assoc :offset offset)]]
              (loop [position [0 0] looked-at #{} recognized-objects []]
                ;;search for matching-cell
                (add-message (str "looking at " position))
@@ -660,10 +676,11 @@
                (cond
                 (nil? position) (do (add-message "scanned whole region")
                                     recognized-objects)
-                (matches? region position color-pred? shape-pred?)
+                (matches? region position color-pred? shape-pred? looked-at)
                 (let [_ (prn "found something -look for visual-routines")
                       [visited recognized]
-                      (get-cluster region color-pred? shape-pred? position)]
+                      (get-cluster region color-pred? shape-pred? position
+                                   looked-at)]
                   (if recognized
                     (let [_ (add-message (str "found " (pr-str recognized)
                                               "on the cells" (pr-str visited)))
@@ -678,12 +695,14 @@
                            looked-at recognized-objects)))
                 :else (recur (next-location region position looked-at)
                              looked-at recognized-objects)))))
-           ))
+          )
 
        (defn color-groups []
          (for [reg (get (:regions @mem/memory) :clusters)
                :let [region (get-contents reg
-                                          (:stimulus @mem/memory))]]
+                                          (:stimulus @mem/memory))
+                     offset [(second (first reg)) (ffirst reg)]
+                     _ (swap! mem/memory assoc :offset offset)]]
            (loop [position [0 0] looked-at #{} recognized-objects []]
              ;;search for matching-cell
              (add-message (str "looking at " position))
@@ -698,7 +717,8 @@
               (let [_ (prn "found something -look for groups")
                     [visited recognized]
                     (get-cluster region #{(first (get-in region position))}
-                                 #{:triangle :square :circle} position)]
+                                 #{:triangle :square :circle} position
+                                 looked-at)]
                 (if recognized
                   (let [_ (add-message (str "found " (pr-str recognized)
                                             "on the cells" (pr-str visited)))
@@ -714,13 +734,13 @@
                   (recur (next-location region position looked-at)
                          looked-at recognized-objects)))
               :else (recur (next-location region position looked-at)
-                           looked-at recognized-objects))))
-         )
-       )
+                           looked-at recognized-objects)))))
        (defn shape-groups []
          (for [reg (get (:regions @mem/memory) :clusters)
                :let [region (get-contents reg
-                                          (:stimulus @mem/memory))]]
+                                          (:stimulus @mem/memory))
+                     offset [(second (first reg)) (ffirst reg)]
+                     _ (swap! mem/memory assoc :offset offset)]]
            (loop [position [0 0] looked-at #{} recognized-objects []]
              ;;search for matching-cell
              (add-message (str "looking at " position))
@@ -736,7 +756,7 @@
                     [visited recognized]
                     (get-cluster region #{:red :black :blue :yellow :green}
                                  #{(second (get-in region position))}
-                                 position)]
+                                 position looked-at)]
                 (if recognized
                   (let [_ (add-message (str "found " (pr-str recognized)
                                             "on the cells" (pr-str visited)))
@@ -752,10 +772,7 @@
                   (recur (next-location region position looked-at)
                          looked-at recognized-objects)))
               :else (recur (next-location region position looked-at)
-                           looked-at recognized-objects))))
-         
-       ))
-
+                           looked-at recognized-objects)))))
        (defn view-groups [type]
          (swap! mem/memory assoc :groups-result
                 [type
@@ -788,12 +805,11 @@
            (scan-region region #{:red :black :blue :yellow :green}
                         #{:circle :square :triangle}))))
 
-       ;;todo add offset in :clusters attribute of recognized objects
-       ;;to be able to count obscured objects 
+       ;;TODO add looked-at check during visual routines recognition
      #+end_src 
 
      #+RESULTS:
-     : #'cosy.focus/focus-view-shapes
+     : #'cosy.focus/count-obscured-objects
 
 * Utilities
   #+begin_src clojure :ns cosy.utils :tangle src/cosy/utils.clj
@@ -894,21 +910,30 @@
       (reduce #(+ %1 (elemcount %2)) 0 scanned-region))
 
     (defn new-stimulus []
-      (swap! mem/memory dissoc :recognized :obscured :messages :regions)
+      (swap! mem/memory dissoc :recognized :obscured :messages :regions :answered)
       (let [gen (first (cosy.gen/generate-next-array))]
         (swap! mem/memory assoc 
                :stimulus gen)))
 
     (defn count-objects [colors shapes]
-      (peri/peripheral-view :color colors)
-      (focus/focus-view colors shapes)
-      (sum-elements (:recognized @mem/memory)))
+      ;;check if answered
+      (if-let [res (get (:answered @mem/memory) [colors shapes])]
+        res
+        (do
+          (peri/peripheral-view :color colors)
+          (focus/focus-view colors shapes)
+          (let [res (sum-elements (:recognized @mem/memory))]
+            (swap! mem/memory update-in [:answered]
+                   #(assoc % [colors shapes] res))
+            (swap! mem/memory assoc :recognized [])
+            res))))
 
-
-
-    (defn count-groups [type]
-      (peri/peripheral-view :region)
-      (focus/view-groups type))
+    (defn count-groups
+      ([] (apply max (map count-groups [:color :shape :proximity])))
+      ([type]
+         (peri/peripheral-view :region)
+         (focus/view-groups type)
+         (count (apply concat (second (:groups-result @mem/memory))))))
 
     (defn count-obscured []
       (peri/peripheral-obscured-regions)
@@ -921,13 +946,20 @@
                             (:cluster obj)))))
        (#(do (prn %) %))
        (group-by :type)
-       (#(do (prn "hihihihi "  %) %))
+       (#(do (prn %) %))
        (map (fn [[k v]] [k (count v)]))
        (into {})))
+
+
+    (defn execute-queries [queries]
+      (apply
+       +
+       (for [[colors shape] queries]
+         (count-objects colors shape))))
   #+end_src 
 
   #+RESULTS:
-  : #'cosy.main/count-objects
+  : #'cosy.main/execute-queries
 
 ;;TODO LIST
   - add a peripheral view for regions 

@@ -1,21 +1,36 @@
-% Created 2014-06-08 Sun 23:41
+% Created 2014-06-10 Tue 22:50
 \NeedsTeXFormat{LaTeX2e}
-\documentclass[11pt,a4paper,oneside]{scrartcl}
+\ProvidesClass{try}
+\documentclass[final,paper=a4,paper=portraitmpagesize=auto,fontsize=11pt,ngerman]{scrartcl}
 \usepackage[ngerman, germanb]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage{listings}
-\usepackage{DejaVuSansMono}
-\usepackage{color}
 \usepackage{fancyhdr}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage[colorlinks=true,linkcolor=black]{hyperref}
+\usepackage{lmodern}
 \usepackage{graphicx}
-\hypersetup{
-    colorlinks=true,        % false: boxed links; true: colored links
-    urlcolor=blue           % color of external links
-}
-\usepackage[margin=2.5cm]{geometry} %ist für die Größere der Seite da, wie groß darf der Textkörper sein.
+\usepackage{geometry} %ist für die Größere der Seite da, wie groß darf der Textkörper sein.
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% fonts of headings
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\setkomafont{sectioning}{\normalfont\sffamily} % \rmfamily
+\setkomafont{descriptionlabel}{\itshape}
+\setkomafont{pageheadfoot}{\normalfont\normalcolor\small\sffamily}
+\setkomafont{pagenumber}{\normalfont\sffamily}
+
+\setkomafont{caption}{\footnotesize\normalfont}
+\setkomafont{captionlabel}{\footnotesize\normalfont}
+
+\date{\today}
+
+% enlarge page
+\geometry{tmargin=35mm,bmargin=30mm,lmargin=30mm,rmargin=30mm}
+
+% skip between paragraphs
+\setlength{\parskip}{1ex}
+% ... and no indentation at start of a new paragraph
+\setlength{\parindent}{0ex}
 
 % mathe makros
 \newcommand{\R}{\mathbb{R}}
@@ -27,53 +42,12 @@
 \newcommand{\im}[1]{\text{Im}\left(#1\right)}
 \newcommand{\re}[1]{\text{Re}\left(#1\right)}
 
-%\renewcommand*\familydefault{\sfdefault}
-\let\oldtexttt = \texttt
-\renewcommand{\texttt}[1]{\oldtexttt{\footnotesize #1}}
+%physics
+\usepackage[]{units}
 
-% enlarge page
-\geometry{tmargin=25mm,bmargin=25mm,lmargin=23mm,rmargin=23mm}
-
-% skip between paragraphs
-\setlength{\parskip}{1ex}
-% ... and no indentation at start of a new paragraph
-\setlength{\parindent}{0ex}
-
-%Layout for lstlistings
-\definecolor{gray}{rgb}{0.6,0.6,0.6}
-\lstloadlanguages{java} % Java sprache laden, notwendig wegen option 'savemem'
-\lstset{ %
-	language=java,	
-	basicstyle=\ttfamily\scriptsize,
-	numbers=left,
-	numberstyle=\tiny\ttfamily,
-	numbersep=6pt,
-	literate=%
-		{Ö}{{\"O}}1
-		{Ä}{{\"A}}1
-		{Ü}{{\"U}}1
-		{ß}{{\ss}}2
-		{ü}{{\"u}}1
-		{ä}{{\"a}}1
-		{ö}{{\"o}}1,
-	showspaces=false,
-	showtabs=false,
-	showstringspaces=false,
-	keywordstyle=\bfseries,
-	tabsize=4,
-	frame=l,
-	aboveskip=12pt,
-	extendedchars=true,
-	stringstyle=\ttfamily,
-	commentstyle=\itshape\color{gray},
-	postbreak=\space,
-	breakindent=5pt,
-	breaklines,
-	xleftmargin=20pt}
-	
 % überschriften und son zeug
 \pagestyle{fancy}
-\lhead{} \chead{} \rhead{} 
+\lhead{Experimentalphysik 1 - M2} \chead{} \rhead{Maik Schünemann, Marcel Jacobse} 
 \lfoot{} \cfoot{\thepage} \rfoot{} 
 \renewcommand{\headrulewidth}{0.4pt} 
 \usepackage[utf8]{inputenc}
@@ -134,8 +108,35 @@ The components for recognizing groups of proximity, color, shape
 only behave differently when they decide whether the adjacent cell
 belongs to the same group or not
 
-\subsubsection{Examples: See the attached Screenshots}
+\subsubsection{Examples: \\}
 \label{sec-1-1-3}
+
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width= 0.7 \textwidth]{grouping_example}
+    \caption{Recognizing 4 groups of proximity}
+    \label{fig:aufbau}
+\end{figure}
+
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width= 0.7 \textwidth]{color_groups_example}
+    \caption{Recognizing the groups of color}
+    \label{fig:aufbau}
+\end{figure}
+
+\begin{figure}[h \begin{figure}[hbtp]
+    \centering
+    \includegraphics[width= 0.7 \textwidth]{count_obscured}
+    \caption{Recognizing one line-like object}
+    \label{fig:aufbau}
+\end{figure}btp]
+    \centering
+    \includegraphics[width= 0.7 \textwidth]{shape_group_example}
+    \caption{Recognizing the groups of shape}
+    \label{fig:aufbau}
+\end{figure}
+
 
 \section{Excercise2}
 \label{sec-2}
@@ -167,5 +168,24 @@ and count how much had obscured objects in them
 
 \section{Examples}
 \label{sec-3}
+1.Here is one example where our System recognizes that there is
+one line-like obscured object
+ \begin{figure}[hbtp]
+      \centering
+      \includegraphics[width= 0.7 \textwidth]{count_obscured}
+      \caption{Recognizing one line-like object}
+      \label{fig:aufbau}
+  \end{figure} \\
+2.Another Example of how the system can deal with obscured objects
+in all circumstances. Here it has the task to count all red circles
+and finds 13. This is the right answer because if recognizes a 
+line of two red circles at the bottom of the image with one
+being obscured
+ \begin{figure}[hbtp]
+      \centering
+      \includegraphics[width= 0.7 \textwidth]{count_red_circles}
+      \caption{counting - including obscured objects}
+      \label{fig:aufbau}
+  \end{figure}
 % Emacs 24.3.1 (Org mode 8.2.6)
 \end{document}
